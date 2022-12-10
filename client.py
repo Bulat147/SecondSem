@@ -42,9 +42,9 @@ class Client:
                 elif nickname in message:
                     pass
                 elif message == 'true':
-                    new_client.my_step = True
+                    self.my_step = True
                 elif message == 'false':
-                    new_client.my_step = False
+                    self.my_step = False
                 else:
                     print(message)
             except:
