@@ -51,8 +51,8 @@ class Game:
 
     def remove_player(self, player):
         if player in self.players:
-            self.players -= [player]
-        if not self.players:
+            self.players.pop(self.players.index(player))
+        if len(self.players) == 0:
             games.pop(self.id)
 
     def __str__(self):
@@ -115,7 +115,7 @@ def handle(player: Player):
                 game_chosen_id = int(player.client.recv(1024).decode('ascii').split()[1])
                 games[game_chosen_id].set_player(player)
                 player.set_game(games[game_chosen_id])
-            except ValueError:
+            except Exception:
                 game_chosen_id = -1
                 free_games = {k: v for k, v in games.items() if len(v.players) == 1}
     while True:
