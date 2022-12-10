@@ -1,4 +1,3 @@
-import os
 import socket
 import threading
 
@@ -17,30 +16,6 @@ client.connect(('127.0.0.1', 5060))
 # Значит понадобятся две функции - receive() и write()
 
 
-# Функция, прослушивающая сервер и отправляющая сообщения
-def receive():
-    # Цикл постоянно пытается получать сообщения и печатать их на экране.
-    while True:
-        try:
-            # если сообщение «NICK», оно не печатается, а отправляет свой псевдоним на сервер.
-            message = client.recv(1024).decode('ascii')
-            if message == 'Write nickname: ':
-                client.send(nickname.encode('ascii'))
-            elif nickname in message:
-                pass
-            elif message == 'true':
-                new_client.my_step = True
-            elif message == 'false':
-                new_client.my_step = False
-            else:
-                print(message)
-        except:
-            # В случае какой-либо ошибки мы закрываем соединение и разрываем цикл
-            print("Error!")
-            client.close()
-            break
-
-
 class Client:
 
     def __init__(self):
@@ -55,10 +30,33 @@ class Client:
                 message = '{}: {}'.format(nickname, input(''))
                 client.send(message.encode('ascii'))
 
+    # Функция, прослушивающая сервер и отправляющая сообщения
+    def receive(self):
+        # Цикл постоянно пытается получать сообщения и печатать их на экране.
+        while True:
+            try:
+                # если сообщение «NICK», оно не печатается, а отправляет свой псевдоним на сервер.
+                message = client.recv(1024).decode('ascii')
+                if message == 'Write nickname: ':
+                    client.send(nickname.encode('ascii'))
+                elif nickname in message:
+                    pass
+                elif message == 'true':
+                    new_client.my_step = True
+                elif message == 'false':
+                    new_client.my_step = False
+                else:
+                    print(message)
+            except:
+                # В случае какой-либо ошибки мы закрываем соединение и разрываем цикл
+                print("Error!")
+                client.close()
+                break
+
 new_client = Client()
 
 # нужно запустить два потока, которые запускают эти две функции.
-receive_thread = threading.Thread(target=receive)
+receive_thread = threading.Thread(target=new_client.receive)
 receive_thread.start()
 
 write_thread = threading.Thread(target=new_client.write)
